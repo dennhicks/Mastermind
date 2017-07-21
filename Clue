@@ -1,0 +1,84 @@
+/**
+ * The Clue class checks the user's guess angainst a randomly generated solution.
+ * It includes a print method to print the clue key.
+ * 
+ * @author D. Hicks
+ * @version 4/24/14
+ */
+import java.awt.*;
+import java.util.*;
+
+public class Clue{
+    private String place;
+    private String color;
+    //check the guess for clues
+    public Clue(String g, String s){
+        place = this.getPlacement(g,s);
+    }
+    //Generate random character solution and return a variable String type.
+    public static String getSolution(){
+        String Answer = null;
+        char[] chars = "RBGPYO".toCharArray();
+        StringBuilder sol = new StringBuilder();
+        Random random = new Random();
+            for (int i=0;i<4;i++) {
+                char c = chars[random.nextInt(chars.length)];
+                sol.append(c);
+            }
+            Answer = sol.toString();
+       
+        return Answer;
+    }
+    //Check for exact color and placement then call the 
+    //colorcheck method with a stripped clue key.
+    public String getPlacement(String guess, String solution){
+        String g = guess;
+        String s = solution;
+        String places = null;
+        int len = g.length();
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> clues = new ArrayList<String>();
+        ArrayList<String> clueKey = new ArrayList<String>();
+        String[] solCheck = new String[len];
+        String[] colCheck = new String[len];
+        
+            for(int i=0;i<len;i++){
+                solCheck[i] = (s.substring(i,i+1));
+                colCheck[i] = (g.substring(i,i+1));
+            }
+            
+            for(int i=0;i<len;i++){
+                if(colCheck[i].equals(solCheck[i])){
+                   solCheck[i] = "M";
+                   colCheck[i] = "C";
+                   clueKey.add("B");
+                }
+            }
+        //Appends the clue key ArrayList into a String.  
+        clues = this.getColors(solCheck,colCheck, clueKey);
+        sb.append(clues);
+        places = clues.toString();
+        return places;
+    }
+    //Check for correct colors only.
+    public ArrayList<String> getColors(String [] s, String [] c, ArrayList<String> k){
+        String[] solCheck = s;
+        String[] colorCheck = c;
+        ArrayList<String> clueKey = k;
+        int len = s.length;
+        for(int i=0;i<len;i++){
+            for(int j=0;j<len;j++){
+                if(colorCheck[i].equals(solCheck[j])){
+                    solCheck[j] = "M";
+                    clueKey.add("W");
+                }
+            }
+        }
+        
+        return clueKey;
+    }
+    //Prints the clue key
+    public void  printClues(){
+        System.out.println("Clue: " + place + " ");
+    }
+}
