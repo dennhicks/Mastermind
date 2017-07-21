@@ -1,0 +1,11 @@
+/**
+ * This class alerts the player that they've entered the wrong type of colorcodes.
+ * 
+ * @author D. Hicks 
+ * @version 4/24/14
+ */
+public class IncorrLetters extends Exception{
+    public IncorrLetters(){   
+        super("Incorrect colorcodes. Try again.");
+    }
+}
