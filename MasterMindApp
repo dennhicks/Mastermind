@@ -1,0 +1,112 @@
+/**
+ * This Class simulates the Master Mind board game.
+ * It includes the user interface.
+ * 
+ * @author D. Hicks 
+ * @version 4/24/14
+ */
+
+import java.awt.*;
+import java.util.*;
+
+
+public class MasterMindApp{
+    private String solution;
+    private Clue clue;
+    private int _count;
+    private boolean _check;
+    //Print title, rules and start gameplay.
+    public MasterMindApp(){
+       System.out.printf("%45s %n %n", "MASTERMIND GAME");
+       String newline = System.getProperty("line.separator");
+
+       System.out.print("Gameplay and rules: The computer is the codemaker and you are the codebreaker." + newline +
+                        "The codemaker chooses a pattern of four colorcoded letters. Duplicates are" + newline +
+                        "allowed, so the player could even choose four letters of the same colorcode." + newline +
+                        "The codebreaker tries to guess the pattern, in both order and colorcode," + newline +
+                        "within twelve guesses. Each guess is made by typing 4 colorcode choices." + newline +
+                        "Once guessed, the codemaker provides feedback by displaying a " + "\"B\"" + " for each" + newline +
+                        "letter from the guess which is correct in both colorcode and position." + newline +
+                        "A " + "\"W\"" + " indicates the existence of a correct colorcoded letter placed in" +newline + 
+                        "the wrong position. To give up and reveal the code, enter the word " + "\"SHOW\"" +"." + newline + newline);
+       this.playGame();
+    }
+      //Plays the game.Prints codes and prompts user for input. Gets clues and prints outcomes
+    public void playGame(){
+       String newline = System.getProperty("line.separator");
+       String guess = "";
+       _count=1;
+       solution = Clue.getSolution();
+       System.out.print("Enter your 4 Letter guess based on these colorcodes:" + newline +
+                        "R = Red, B = Blue, G = Green, P = Purple, Y = Yellow, and O = Orange."+ newline + newline);
+       
+        while (!guess.equals(solution)){
+            boolean gLen = false;
+            while(!gLen){
+                _check = false;
+                System.out.print("Enter guess number " + _count +": ");
+                //throw incorrect number of colorcodes exception.
+                try{
+                    guess = this.getUserGuess();
+                    if(guess.length()!=4){
+                        throw new IncorrNum();
+                    }else {gLen = true;}
+                }
+                catch(IncorrNum err){
+                    System.out.println(err);
+                }
+            }
+            //check for reveal code or to keep guessing.
+            if(!guess.equals("SHOW")&&(!_check)){
+                clue = new Clue(guess, solution);
+                clue.printClues();
+                _count++;
+            }else if(_check){_check=false;}
+            else {break; }
+            //exit after number of guesses are used up.
+            if (_count == 13)
+                break;   
+       }
+       //prints result if guess is correct, incorrect or the reveal code has been entered.
+       if(guess.equals(solution))
+            System.out.println("You've guessed correctly! Congratulations!");
+       else if(guess.equals("SHOW"))
+        System.out.println("The solution was: " + solution);
+       else System.out.println("You Lose. The correct solution was: " + solution + newline);
+       this.newGame();
+    }
+    //Prompts user to play again.
+    public void newGame(){
+        boolean flag = false;
+        while(!flag){  
+            System.out.print("Play again? y/n: ");
+            Scanner kbd2 = new Scanner(System.in);
+            String answer = kbd2.nextLine();
+            if(answer.equals("y")){
+                flag=true;
+                this.playGame();
+            }
+            else if(answer.equals("n")){
+                flag=true;
+                System.exit(0);
+            }
+        }
+    }
+    //Gets user input throws exception when valid letters are not entered.
+    public String getUserGuess(){
+        Scanner kbd = null;
+        try{kbd = new Scanner(System.in);
+           if (!kbd.hasNext("[B,R,Y,O,G,P]+")&&(!kbd.hasNext("SHOW"))){
+              _check=true;
+             throw new IncorrLetters();
+            }
+        }
+        catch(IncorrLetters err){System.out.println(err);}
+        
+        return kbd.nextLine();
+    }
+    //Starts new game.
+    public static void main(String [] args){
+        new MasterMindApp();
+    }
+}
